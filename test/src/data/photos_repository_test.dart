@@ -107,4 +107,60 @@ void main() {
       },
     );
   });
+
+  group('persistLikes', () {
+    test(
+      'When preferences persist info with success should return true',
+      () async {
+        when(() => preferences.setStringList(any(), any()))
+            .thenAnswer((_) => Future.value(true));
+
+        final likedPhotos = [
+          const PhotoModel(
+            id: 1,
+            title: 'accusamus beatae ad facilis cum similique qui sunt',
+            imageUrl: 'https://via.placeholder.com/600/92c952',
+            thumbnailUrl: 'https://via.placeholder.com/600/92c952',
+            isLiked: true,
+          ),
+          const PhotoModel(
+            id: 2,
+            title: 'reprehenderit est deserunt velit ipsam',
+            imageUrl: 'https://via.placeholder.com/600/771796',
+            thumbnailUrl: 'https://via.placeholder.com/150/771796',
+            isLiked: true,
+          )
+        ];
+
+        expect(await repository.persistLikes(likedPhotos), true);
+      },
+    );
+
+    test(
+      'When preferences persist info fails should return false',
+      () async {
+        when(() => preferences.setStringList(any(), any()))
+            .thenAnswer((_) => Future.value(false));
+
+        final likedPhotos = [
+          const PhotoModel(
+            id: 1,
+            title: 'accusamus beatae ad facilis cum similique qui sunt',
+            imageUrl: 'https://via.placeholder.com/600/92c952',
+            thumbnailUrl: 'https://via.placeholder.com/600/92c952',
+            isLiked: true,
+          ),
+          const PhotoModel(
+            id: 2,
+            title: 'reprehenderit est deserunt velit ipsam',
+            imageUrl: 'https://via.placeholder.com/600/771796',
+            thumbnailUrl: 'https://via.placeholder.com/150/771796',
+            isLiked: true,
+          )
+        ];
+
+        expect(await repository.persistLikes(likedPhotos), false);
+      },
+    );
+  });
 }
