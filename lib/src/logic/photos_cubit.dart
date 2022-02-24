@@ -14,7 +14,7 @@ class PhotosCubit extends Cubit<PhotosState> {
 
   Future<void> getPhotos() async {
     try {
-      emit(const LoadingState());
+      emit(LoadingState(photos: state.photos));
 
       final position = state.photos.isNotEmpty ? state.photos.last.id : 0;
       final newPhotos = await _repository.getPhotos(position);
