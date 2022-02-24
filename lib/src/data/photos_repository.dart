@@ -29,21 +29,37 @@ class HttpPhotosRepository implements IPhotosRepository {
 
     final likedPhotosIds =
         await _preferences.getStringList(_likedPhotoIdsKey) ?? [];
-    final response = await _client.get(Uri.parse(url));
+    final response =
+        await _client.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
 
-    final data = (jsonDecode(response.body) as List<Object?>)
-        .map((object) => object as Map<String, Object?>)
+    final data = _bodyToMapList(response.body);
+
+    final photos = data
+        .map(
+          (photo) => _mergeWithLikeInfo(
+            photo,
+            likedPhotosIds,
+          ),
+        )
         .toList();
 
-    final photos = data.map((photo) {
-      final isPhotoLiked = likedPhotosIds
-              .firstWhereOrNull((id) => int.parse(id) == photo['id']) !=
-          null;
-
-      return PhotoModel.fromJson(photo, isPhotoLiked);
-    }).toList();
-
     return photos;
+  }
+
+  List<Map<String, Object?>> _bodyToMapList(String body) {
+    final decodedBody = jsonDecode(body) as List<Object?>;
+    return decodedBody.map((object) => object as Map<String, Object?>).toList();
+  }
+
+  PhotoModel _mergeWithLikeInfo(
+    Map<String, Object?> photoJson,
+    List<String> likedIds,
+  ) {
+    final isPhotoLiked =
+        likedIds.firstWhereOrNull((id) => int.parse(id) == photoJson['id']) !=
+            null;
+
+    return PhotoModel.fromJson(photoJson, isPhotoLiked);
   }
 
   @override
