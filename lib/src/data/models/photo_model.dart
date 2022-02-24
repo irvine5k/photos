@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:equatable/equatable.dart';
 
 class PhotoModel extends Equatable {
@@ -10,11 +8,6 @@ class PhotoModel extends Equatable {
     required this.thumbnailUrl,
     this.isLiked = false,
   });
-
-  factory PhotoModel.fromJsonString(String jsonString) {
-    final json = jsonDecode(jsonString) as Map<String, Object?>;
-    return PhotoModel.fromJson(json);
-  }
 
   factory PhotoModel.fromJson(
     Map<String, Object?> json, [
@@ -33,16 +26,6 @@ class PhotoModel extends Equatable {
   final String imageUrl;
   final String thumbnailUrl;
   final bool isLiked;
-
-  Map<String, Object> toJson() => {
-        'id': id,
-        'title': title,
-        'imageUrl': imageUrl,
-        'thumbnailUrl': thumbnailUrl,
-        'isLiked': isLiked,
-      };
-
-  String toJsonString() => jsonEncode(toJson());
 
   PhotoModel toggleLike() => PhotoModel(
         id: id,
